@@ -22,24 +22,33 @@ A Single-Page-Application (SPA) designed for interactive budget controlling of r
 **1. Clone the Repository**
 ```bash
 git clone https://github.com/excite-finanz-dev/webapp/
-cd frontend
+cd webapp
 ```
 
 **2. Set Up the Backend**
-Navigate to the backend directory, create a virtual environment, and install the required dependencies:
+From the repository root, set up and run the backend with Python 3.12.
+
+Windows (PowerShell)
+
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+```
+
+Linux
 
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m uvicorn main:app --reload --port 8000
 ```
 
-Backend runs on port 8000:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
+- [Health check](http://127.0.0.1:8000/api/health) returns `{"status":"ok"}`.
+- [Interactive API documentation](http://127.0.0.1:8000/docs) shows the available endpoints.
+- The local React development server can call the API from `http://localhost:5173` or `http://127.0.0.1:5173`.
 
 **3. Set Up the Frontend**
 
