@@ -1,3 +1,5 @@
+from .users_enum import Role
+
 class User:
     def __init__(self, vorname, nachname, uni, role):
         self.vorname = vorname
@@ -5,4 +7,4 @@ class User:
         self.uni = uni
         self.role = role
 
-    #def methode_name():
+    #def methode_name():<
