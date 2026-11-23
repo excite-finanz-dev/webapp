@@ -26,25 +26,25 @@ cd webapp
 ```
 
 **2. Set Up the Backend**
-From the repository root, set up and run the backend with Python 3.12.
+From the repository root, set up and run the backend with Python 3.12 or 3.13.
 
 Windows (PowerShell)
 
 ```powershell
-cd backend
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+python -m venv backend\.venv
+.\backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+.\backend\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload --reload-dir backend --port 8000
 ```
 
 Linux
 
 ```bash
-cd backend
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m uvicorn main:app --reload --port 8000
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+backend/.venv/bin/python -m uvicorn backend.main:app --reload --reload-dir backend --port 8000
 ```
+
+If your editor cannot resolve FastAPI or Pydantic, select the interpreter from `backend/.venv` in the editor. Use `backend/.venv/Scripts/python.exe` on Windows or `backend/.venv/bin/python` on Linux.
 
 - [Health check](http://127.0.0.1:8000/api/health) returns `{"status":"ok"}`.
 - [Interactive API documentation](http://127.0.0.1:8000/docs) shows the available endpoints.
@@ -52,16 +52,27 @@ python3 -m venv .venv
 
 **3. Set Up the Frontend**
 
-Open a new terminal window, 
-navigate to the frontend directory, 
-install the dependencies, 
-and start the Vite development server:
+Open a new terminal at the repository root and start the Vite development server.
 
 ```
 cd frontend
 npm install
 npm run dev
 ```
+
+### Annual cost planning demo
+
+Open the URL printed by Vite, select a budget year and enter planned amounts in euros. Each year has one plan. The default categories are personnel, material and other. You can add or rename categories. Saved amounts refer to category IDs.
+
+API routes are relative to `/api/projects/demo-project/budgets`. Amounts use integer cents.
+
+| Route | Purpose |
+| --- | --- |
+| `GET, PUT /{year}` | Read or replace the annual plan. A PUT body maps category IDs to cents, for example `{"personnel": 250000}`. Omitted categories are set to zero. |
+| `POST /categories` | Add a category using `{"name": "Travel"}`. |
+| `PATCH /categories/{category_id}` | Rename a category using the same body. |
+
+The database defaults to `backend/budgets.sqlite3`. Set `BUDGET_DB_PATH` to use another file. Existing standalone plans are copied on first access. Data from a previous hierarchy stays in its original tables.
 
 ---
 ### 🔒 Data Protection
