@@ -1,22 +1,12 @@
 from .users_enum import Role
+from pydantic import BaseModel, ConfigDict
 
-class User:
-    def __init__(self, vorname, nachname, uni, role):
-        self.vorname = vorname
-        self.nachname = nachname
-        self.uni = uni
-        self.role = role
+class User(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
 
-    @property
-    def role(self):
-        return self._role
-
-    @role.setter
-    def role(self, value):
-        if not isinstance(value, Role):
-            raise TypeError(
-                f"role must be Role, got {type(value).__name__}"
-            )
-        self._role = value
+    vorname: str
+    nachname: str
+    uni: str
+    role: Role
 
     #def methode_name():<
