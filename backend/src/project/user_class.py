@@ -1,8 +1,6 @@
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from enum import Enum
-from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, model_validator
 
 if __package__:
