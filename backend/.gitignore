@@ -1,3 +1,4 @@
 .venv/
 __pycache__/
 /budgets.sqlite3*
+/src/project/budgets.sqlite3*

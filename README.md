@@ -33,7 +33,7 @@ Windows (PowerShell)
 ```powershell
 python -m venv backend\.venv
 .\backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
-.\backend\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload --reload-dir backend --port 8000
+.\backend\.venv\Scripts\python.exe -m uvicorn project.main:app --app-dir backend/src --reload --reload-dir backend/src --port 8000
 ```
 
 Linux
@@ -41,7 +41,7 @@ Linux
 ```bash
 python3 -m venv backend/.venv
 backend/.venv/bin/python -m pip install -r backend/requirements.txt
-backend/.venv/bin/python -m uvicorn backend.main:app --reload --reload-dir backend --port 8000
+backend/.venv/bin/python -m uvicorn project.main:app --app-dir backend/src --reload --reload-dir backend/src --port 8000
 ```
 
 If your editor cannot resolve FastAPI or Pydantic, select the interpreter from `backend/.venv` in the editor. Use `backend/.venv/Scripts/python.exe` on Windows or `backend/.venv/bin/python` on Linux.
@@ -72,7 +72,7 @@ API routes are relative to `/api/projects/demo-project/budgets`. Amounts use int
 | `POST /categories` | Add a category using `{"name": "Travel"}`. |
 | `PATCH /categories/{category_id}` | Rename a category using the same body. |
 
-The database defaults to `backend/budgets.sqlite3`. Set `BUDGET_DB_PATH` to use another file. Existing standalone plans are copied on first access. Data from a previous hierarchy stays in its original tables.
+The database defaults to `backend/budgets.sqlite3`. If that file is absent and a database already exists at `backend/src/project/budgets.sqlite3`, the backend uses the existing file. Set `BUDGET_DB_PATH` to use another file. Existing standalone plans are copied on first access. Data from a previous hierarchy stays in its original tables.
 
 ---
 ### 🔒 Data Protection

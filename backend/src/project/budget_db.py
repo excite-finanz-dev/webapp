@@ -61,7 +61,12 @@ def initialize_schema(db: sqlite3.Connection) -> None:
 
 @contextmanager
 def budget_db(*, write: bool = False):
-    default_path = Path(__file__).resolve().with_name("budgets.sqlite3")
+    module_path = Path(__file__).resolve()
+    default_path = module_path.parents[2] / "budgets.sqlite3"
+    previous_path = module_path.with_name("budgets.sqlite3")
+    if not default_path.exists() and previous_path.is_file():
+        default_path = previous_path
+
     with closing(sqlite3.connect(os.environ.get("BUDGET_DB_PATH") or default_path)) as db, db:
         db.execute("PRAGMA foreign_keys = ON")
         if not table_exists(db, "annual_plans"):
