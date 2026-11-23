@@ -7,9 +7,16 @@ class User:
         self.uni = uni
         self.role = role
 
-    def __setattr__(self, role, value):
-        if role == "role" and not isinstance(value, Role):
-            raise TypeError(f"{role} must be Role, got {type(value).__role__}")
-        super().__setattr__(role, value)
+    @property
+    def role(self):
+        return self._role
+
+    @role.setter
+    def role(self, value):
+        if not isinstance(value, Role):
+            raise TypeError(
+                f"role must be Role, got {type(value).__name__}"
+            )
+        self._role = value
 
     #def methode_name():<
