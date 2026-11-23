@@ -54,3 +54,32 @@ class User(BaseModel):
         if self.role not in GLOBAL_ROLES and not self.node_id:
             raise ValueError(f"Role '{self.role.value}' needs a node_id.")
         return self
+    
+    def has_permission(self, permission: Permission, node_path: Sequence[str]) -> bool:
+        """Check a permission for one node of the hierarchy.
+
+        node_path lists the node IDs from the top down to the node itself,
+        e.g. (measure_id, action_line_id, project_id).
+
+        - READ: the user's own node and every node below it.
+        - WRITE: only the user's own node (spec: "configure and add data to their own levels").
+        - Admin and board are not tied to a node.
+        """
+        if permission not in ROLE_PERMISSIONS[self.role]:
+            return False
+        if self.role in GLOBAL_ROLES:
+            return True
+        if not self.node_id or not node_path:
+            return False
+        if permission is Permission.READ:
+            return self.node_id in node_path
+        return node_path[-1] == self.node_id
+
+    def can_read(self, node_path: Sequence[str]) -> bool:
+        return self.has_permission(Permission.READ, node_path)
+
+    def can_write(self, node_path: Sequence[str]) -> bool:
+        return self.has_permission(Permission.WRITE, node_path)
+
+    def can_configure(self, node_path: Sequence[str]) -> bool:
+        return self.has_permission(Permission.CONFIGURE, node_path)
