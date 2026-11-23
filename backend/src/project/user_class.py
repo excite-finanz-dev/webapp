@@ -1,4 +1,8 @@
+from collections.abc import Callable, Sequence
 from enum import Enum
+from typing import Annotated
+
+from fastapi import Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, model_validator
 
 if __package__:
@@ -8,8 +12,8 @@ else:
 
 
 class Role(str, Enum):
-    ADMIN = "admin"
-    BOARD_OF_DIRECTORS = "board_of_directors"
+    ADMIN = "admin"  # Finanzabteilung: configures the application
+    BOARD_OF_DIRECTORS = "board_of_directors"  # Vorstand: overview of the whole budget
     MEASURE_LEADS = "measure_leads"
     ACTION_LINE_Teams = "action_line_teams"
     PROJECT_EMPLOYEES = "project_employees"
@@ -17,10 +21,11 @@ class Role(str, Enum):
 
 class Permission(str, Enum):
     READ = "read"
-    WRITE = "write" 
-    CONFIGURE = "configure"
+    WRITE = "write"  # add and edit budget data
+    CONFIGURE = "configure"  # change the structure, e.g. cost categories
 
 
+# What each role may do at all. Where it may do it is decided by User.has_permission.
 ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
     Role.ADMIN: frozenset({Permission.READ, Permission.WRITE, Permission.CONFIGURE}),
     Role.BOARD_OF_DIRECTORS: frozenset({Permission.READ}),
@@ -29,6 +34,7 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
     Role.PROJECT_EMPLOYEES: frozenset({Permission.READ, Permission.WRITE}),
 }
 
+# These roles see the whole hierarchy. All other roles are tied to one node.
 GLOBAL_ROLES = frozenset({Role.ADMIN, Role.BOARD_OF_DIRECTORS})
 
 
@@ -39,6 +45,8 @@ class User(BaseModel):
     nachname: str
     uni: str
     role: Role
+    # ID of the measure, action line or project this user belongs to.
+    # Required for every role that is not global.
     node_id: str | None = None
 
     @model_validator(mode="after")
