@@ -7,8 +7,10 @@ from fastapi import Path as ApiPath
 from pydantic import BaseModel, ConfigDict, Field, RootModel, StringConstraints
 
 if __package__:
+    from .budget import Budget
     from .budget_db import DEMO_PROJECT_ID, budget_db
 else:
+    from budget import Budget
     from budget_db import DEMO_PROJECT_ID, budget_db
 
 router = APIRouter(prefix=f"/api/projects/{DEMO_PROJECT_ID}/budgets", tags=["Project budgets"])
@@ -48,12 +50,19 @@ def read_plan(db: sqlite3.Connection, year: int) -> AnnualPlan:
         LEFT JOIN annual_plans AS plan ON plan.category_id = category.id AND plan.year = ?
         ORDER BY category.rowid
     """, (year,)).fetchall()
-    amounts = {category_id: cents for category_id, _, cents in rows}
+    budget = Budget(
+        "Demo-Projekt",
+        budget_id=DEMO_PROJECT_ID,
+        categories={category_id: name for category_id, name, _ in rows},
+    )
+    budget.set_plan(year, {category_id: cents for category_id, _, cents in rows})
     return AnnualPlan(
         year=year,
-        categories=[CostCategory(id=category_id, name=name) for category_id, name, _ in rows],
-        planned_cents=PlannedCosts(amounts),
-        planned_total_cents=sum(amounts.values()),
+        categories=[
+            CostCategory(id=category_id, name=name) for category_id, name in budget.categories.items()
+        ],
+        planned_cents=PlannedCosts(budget.planned_costs(year)),
+        planned_total_cents=budget.planned_total_cents(year),
     )
 
 

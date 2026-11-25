@@ -3,12 +3,12 @@ import sqlite3
 from contextlib import closing, contextmanager
 from pathlib import Path
 
+if __package__:
+    from .budget import STANDARD_CATEGORIES
+else:
+    from budget import STANDARD_CATEGORIES
+
 DEMO_PROJECT_ID = "demo-project"
-STANDARD_CATEGORIES = {
-    "personnel": "Personalkosten",
-    "material": "Sachkosten",
-    "other": "Sonstiges",
-}
 
 
 def table_exists(db: sqlite3.Connection, name: str) -> bool:
