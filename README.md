@@ -27,6 +27,7 @@ cd webapp
 
 **2. Set Up the Backend**
 From the repository root, set up and run the backend with Python 3.12 or 3.13.
+The FastAPI app lives in `backend/src/project/main.py`. Uvicorn loads it as `project.main:app` using `backend/src` as the import root.
 
 Windows (PowerShell)
 
@@ -36,10 +37,24 @@ python -m venv backend\.venv
 .\backend\.venv\Scripts\python.exe -m uvicorn project.main:app --app-dir backend/src --reload --reload-dir backend/src --port 8000
 ```
 
-Linux
+Linux (APT on Ubuntu 24.04 or Debian 13)
 
 ```bash
+sudo apt update
+sudo apt install python3 python3-venv
 python3 -m venv backend/.venv
+```
+
+Linux (DNF on Fedora)
+
+```bash
+sudo dnf install python3.13
+python3.13 -m venv backend/.venv
+```
+
+After creating the virtual environment on Linux, install the backend dependencies and start the server.
+
+```bash
 backend/.venv/bin/python -m pip install -r backend/requirements.txt
 backend/.venv/bin/python -m uvicorn project.main:app --app-dir backend/src --reload --reload-dir backend/src --port 8000
 ```
